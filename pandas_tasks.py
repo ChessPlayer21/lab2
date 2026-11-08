@@ -7,11 +7,7 @@ from grader_contracts.pandas_tasks import TitanicInput, TitanicSummary
 
 
 def analyze_titanic(data: TitanicInput) -> TitanicSummary:
-    """Выполните загрузку и анализ датасета Titanic.
-
-    Нужно: посчитать пропуски, число пассажиров старше 30 лет, средний возраст
-    и долю выживших по классам, а также пять наибольших тарифов по убыванию.
-    """
+    """Выполните загрузку и анализ датасета Titanic."""
     matrix_data = pd.read_csv(data.csv_path)
     row_count = len(matrix_data)
     gaps_in_PassengerId = matrix_data["PassengerId"].isna().sum()
@@ -27,30 +23,30 @@ def analyze_titanic(data: TitanicInput) -> TitanicSummary:
     gaps_in_Cabin = matrix_data["Cabin"].isna().sum()
     gaps_in_Embarked = matrix_data["Embarked"].isna().sum()
     gaps = {
-    "PassengerId": gaps_in_PassengerId,
-    "Survived": gaps_in_Survived,
-    "Pclass": gaps_in_Pclass,
-    "Name": gaps_in_Name,
-    "Sex": gaps_in_Sex,
-    "Age": gaps_in_Age ,
-    "SibSp": gaps_in_SibSp,
-    "Parch": gaps_in_Parch,
-    "Ticket": gaps_in_Ticket,
-    "Fare": gaps_in_Fare,
-    "Cabin": gaps_in_Cabin,
-    "Embarked": gaps_in_Embarked,
-}
-    age_over_30 = (matrix_data["Age"] > 30).sum()
+        "PassengerId": int(gaps_in_PassengerId),
+        "Survived": int(gaps_in_Survived),
+        "Pclass": int(gaps_in_Pclass),
+        "Name": int(gaps_in_Name),
+        "Sex": int(gaps_in_Sex),
+        "Age": int(gaps_in_Age),
+        "SibSp": int(gaps_in_SibSp),
+        "Parch": int(gaps_in_Parch),
+        "Ticket": int(gaps_in_Ticket),
+        "Fare": int(gaps_in_Fare),
+        "Cabin": int(gaps_in_Cabin),
+        "Embarked": int(gaps_in_Embarked),
+    }
+    age_over_30 = int((matrix_data["Age"] > 30).sum())
     age = matrix_data.groupby("Pclass")["Age"].mean().to_dict()
     age = {int(k): float(v) for k, v in age.items()}
     survived = matrix_data.groupby("Pclass")["Survived"].mean()
     survived = {int(k): float(v) for k, v in survived.items()}
-    max = matrix_data["Fare"].nlargest(5)
+    max_fares = matrix_data["Fare"].nlargest(5).tolist()          
     return TitanicSummary(
-        row_count=row_count,
+        row_count=int(row_count),                                 
         missing_by_column=gaps,
         adults_over_30_count=age_over_30,
         mean_age_by_pclass=age,
         survival_rate_by_pclass=survived,
-        highest_fares=max,
+        highest_fares=[float(x) for x in max_fares],            
     )
